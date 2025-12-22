@@ -1,13 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from firebase_config import db
-from cert_gen import create_certificate
-# Import utilities
-from utils import send_email, generate_otp, otp_storage, get_all_events
+from utils import send_email, generate_otp, otp_storage
 import qrcode
 import io
 import base64
 import random
 
+# Define the Blueprint
 student_bp = Blueprint('student_bp', __name__)
 
 # --- HELPER: QR GENERATOR ---
@@ -21,12 +20,15 @@ def generate_qr(data):
     img_io.seek(0)
     return base64.b64encode(img_io.getvalue()).decode('utf-8')
 
-# --- ROUTE: STUDENT PORTAL (AUTH) ---
+# --- ROUTE: STUDENT PORTAL (Login/Register Page) ---
 @student_bp.route('/participant', methods=['GET', 'POST'])
 def auth():
     # Fetch current event settings for the form
-    event_doc = db.collection('settings').document('current_event').get()
-    event_settings = event_doc.to_dict() if event_doc.exists else {}
+    try:
+        event_doc = db.collection('settings').document('current_event').get()
+        event_settings = event_doc.to_dict() if event_doc.exists else {}
+    except Exception:
+        event_settings = {}
     
     # Default settings if none exist
     if not event_settings.get('team_config'):
@@ -62,7 +64,7 @@ def send_otp_route():
     else:
         return jsonify({"message": "Failed to send email. Check Server Logs."}), 500
 
-# --- ROUTE: HANDLE REGISTRATION (WITH UNIQUE ID & WHATSAPP LINK) ---
+# --- ROUTE: HANDLE REGISTRATION ---
 @student_bp.route('/participant/register', methods=['POST'])
 def register():
     try:
@@ -124,7 +126,7 @@ def register():
         # 6. Clear OTP
         if email in otp_storage: del otp_storage[email]
         
-        # 7. Send Confirmation Email WITH TEAM ID & WHATSAPP LINK
+        # 7. Send Confirmation Email
         subject = f"Registration Confirmed - Team {team_data['team_name']}"
         body = f"""
         <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd;">
@@ -143,17 +145,12 @@ def register():
                 <p style="margin: 0 0 15px 0;">Click below to join the WhatsApp group for updates:</p>
                 <a href="{wa_link}" style="background:#25D366; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; font-weight:bold; display: inline-block;">Join WhatsApp Group</a>
             </div>
-            
-            <br>
-            <p>Please login to your dashboard to track your status.</p>
-            <br>
-            <p>Best Regards,<br><b>SapthaHack Organizing Team</b></p>
         </div>
         """
         
         send_email(email, subject, body)
         
-        flash(f"Registration Successful! Check your email for Team ID & Group Link.", "success")
+        flash(f"Registration Successful! Check your email for Team ID.", "success")
         return redirect(url_for('student_bp.auth'))
 
     except Exception as e:
@@ -196,7 +193,6 @@ def dashboard():
         return redirect(url_for('student_bp.auth'))
         
     team = doc.to_dict()
-    # Updated QR Code to use the new Team ID if available, otherwise fallback to Email
     qr_data = team.get('team_id', f"SAPTHA-TEAM-{email}")
     qr_b64 = f"data:image/png;base64,{generate_qr(qr_data)}"
 
