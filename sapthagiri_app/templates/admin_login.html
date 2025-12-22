@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Admin Login | SapthaHack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #f4f6f9; font-family: 'Poppins', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .login-card { 
+            background: #fff; padding: 40px; border-radius: 8px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+            width: 100%; max-width: 400px; 
+            border-top: 5px solid #003366; 
+        }
+        .btn-classic { background: #003366; color: #fff; width: 100%; padding: 12px; border: none; border-radius: 5px; font-weight: 600; text-transform: uppercase; transition: 0.3s; }
+        .btn-classic:hover { background: #002244; }
+        .form-control { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; }
+        .brand-title { color: #003366; font-weight: 700; margin-bottom: 5px; letter-spacing: 1px; }
+        .security-box { background: #fff5f5; border: 1px dashed #dc3545; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="login-card text-center">
+        <div class="mb-4">
+            <h3 class="brand-title">ADMIN CONSOLE</h3>
+            <p class="text-muted small">Restricted University Access</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-danger py-2 small mb-3">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="text-start mb-1"><label class="small fw-bold text-muted">Operator Email</label></div>
+            <input type="email" name="email" class="form-control" placeholder="admin@sapthagiri.edu.in" required>
+            
+            <div class="text-start mb-1"><label class="small fw-bold text-muted">Password</label></div>
+            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+            
+            <div class="security-box text-start">
+                <label class="small text-danger fw-bold mb-1">SECURE ACCESS ID</label>
+                <input type="text" name="admin_id" class="form-control mb-1" placeholder="ADM-XXXX" style="border-color: #ffcccc;" required>
+            </div>
+
+            <button class="btn-classic">Authenticate</button>
+        </form>
+
+        <div class="mt-4 pt-3 border-top">
+            <a href="/admin/register" class="small text-muted text-decoration-none">Initialize New Admin</a>
+            <span class="mx-2 text-muted">|</span>
+            <a href="/" class="small text-muted text-decoration-none">Abort Connection</a>
+        </div>
+    </div>
+</body>
+</html>

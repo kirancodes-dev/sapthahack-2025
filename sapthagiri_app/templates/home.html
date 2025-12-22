@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sapthagiri NPS University | Top Private University in Bangalore</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* OFFICIAL UNIVERSITY COLORS */
+            --uni-blue: #003366; 
+            --uni-gold: #FFCC00; 
+            --uni-light: #f8f9fa;
+        }
+        body { font-family: 'Poppins', sans-serif; color: #333; background-color: #fff; overflow-x: hidden; }
+
+        /* --- TOP BAR --- */
+        .top-bar { 
+            background-color: var(--uni-blue); 
+            color: #fff; 
+            padding: 10px 0; 
+            font-size: 0.85rem; 
+            border-bottom: 3px solid var(--uni-gold); 
+        }
+        .top-bar a { color: #fff; text-decoration: none; margin-left: 15px; transition: 0.3s; }
+        .top-bar a:hover { color: var(--uni-gold); }
+        
+        /* --- NAVBAR --- */
+        .navbar { background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 10px 0; }
+        .navbar-brand img { height: 75px; margin-right: 15px; } 
+        .nav-link { color: #444 !important; font-weight: 500; margin: 0 8px; text-transform: uppercase; font-size: 0.9rem; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { color: var(--uni-blue) !important; }
+        
+        /* Hackathon Button */
+        .btn-hackathon-nav { 
+            background: var(--uni-blue); color: #fff !important; 
+            padding: 8px 20px; border-radius: 4px; 
+            font-weight: 600; letter-spacing: 0.5px; 
+        }
+        .btn-hackathon-nav:hover { 
+            background: var(--uni-gold); color: #000 !important; 
+            transform: translateY(-2px); 
+        }
+
+        /* --- HERO SLIDER --- */
+        .carousel-item { height: 85vh; background-size: cover; background-position: center; }
+        .overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 51, 102, 0.4); display: flex; align-items: center; justify-content: center; 
+        }
+        .hero-content { text-align: center; color: #fff; max-width: 900px; padding: 20px; animation: fadeInUp 1s ease-out; }
+        .hero-title { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .btn-hero { 
+            padding: 15px 40px; font-size: 1rem; font-weight: 600; 
+            text-transform: uppercase; border-radius: 4px; border: none; 
+            transition: 0.3s; margin: 10px; 
+            text-decoration: none;
+        }
+        .btn-primary-uni { background: var(--uni-gold); color: #000; }
+        .btn-primary-uni:hover { background: #fff; color: var(--uni-blue); }
+
+        /* --- SECTIONS --- */
+        .section-padding { padding: 80px 0; }
+        .section-title { margin-bottom: 60px; text-align: center; }
+        .section-title h2 { 
+            font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; 
+            color: var(--uni-blue); text-transform: uppercase; position: relative; display: inline-block; 
+        }
+        .section-title h2::after { 
+            content: ''; display: block; width: 80px; height: 4px; 
+            background: var(--uni-gold); margin: 15px auto 0; 
+        }
+        
+        /* IMAGE GALLERY */
+        .gallery-img { width: 100%; height: 260px; object-fit: cover; border-radius: 8px; transition: 0.4s; cursor: pointer; border-bottom: 5px solid var(--uni-gold); }
+        .gallery-img:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+
+        /* LEADERSHIP CARDS */
+        .leader-card { 
+            background: #fff; padding: 30px 20px; 
+            border-radius: 10px; text-align: center; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
+            transition: 0.3s; border-top: 4px solid transparent;
+            height: 100%;
+        }
+        .leader-card:hover { 
+            transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
+            border-top-color: var(--uni-blue); 
+        }
+        .leader-img { 
+            width: 140px; height: 140px; object-fit: cover; 
+            border-radius: 50%; border: 4px solid var(--uni-gold); 
+            margin-bottom: 20px; padding: 3px; background: #fff;
+        }
+        .leader-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--uni-blue); margin-bottom: 5px; }
+        .leader-role { color: #777; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+
+        /* --- FOOTER --- */
+        .footer { background: var(--uni-blue); color: #fff; padding: 70px 0 30px; }
+        .footer h4 { color: var(--uni-gold); font-family: 'Playfair Display', serif; margin-bottom: 25px; }
+        .footer ul li { margin-bottom: 10px; }
+        .footer ul li a { color: rgba(255,255,255,0.7); text-decoration: none; transition: 0.3s; }
+        .footer ul li a:hover { color: var(--uni-gold); padding-left: 5px; color: #fff; }
+        .copyright { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 50px; padding-top: 20px; text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+
+        /* --- AI CHATBOT & MODAL STYLES --- */
+        .chat-float-btn { 
+            position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; 
+            background: var(--uni-blue); color: #fff; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 28px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.3); 
+            z-index: 9998; transition: 0.3s; border: 2px solid var(--uni-gold); 
+        }
+        .chat-float-btn:hover { transform: scale(1.1); background: var(--uni-gold); color: var(--uni-blue); }
+        
+        .chat-box-container { 
+            position: fixed; bottom: 110px; right: 30px; width: 380px; height: 500px; 
+            background: #fff; border-radius: 15px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
+            z-index: 9999; display: none; flex-direction: column; overflow: hidden; 
+            border: 1px solid #e0e0e0; 
+        }
+        .chat-box-container.active { display: flex; animation: slideInUp 0.3s ease-out; }
+        
+        .chat-header { 
+            background: var(--uni-blue); color: white; padding: 15px 20px; 
+            font-size: 1.1rem; font-weight: 600; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; background: #f4f6f9; }
+        
+        .message .text { display: inline-block; padding: 10px 15px; border-radius: 15px; max-width: 85%; font-size: 0.9rem; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .message.user { text-align: right; } 
+        .message.user .text { background: var(--uni-blue); color: white; border-bottom-right-radius: 2px; }
+        .message.assistant .text { background: #fff; color: #333; border-bottom-left-radius: 2px; }
+        
+        .chat-input-area { padding: 15px; border-top: 1px solid #ddd; display: flex; background: #fff; align-items: center; }
+        .chat-input-area input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; margin-right: 10px; font-size: 0.95rem; }
+        .chat-input-area button { 
+            background: var(--uni-blue); border: none; color: white; 
+            padding: 10px 15px; border-radius: 50%; cursor: pointer; transition: 0.3s; 
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; 
+        }
+        
+        /* --- PORTAL SELECTION MODAL --- */
+        .portal-modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 51, 102, 0.95); z-index: 9999; 
+            display: flex; justify-content: center; align-items: center; 
+            opacity: 0; pointer-events: none; transition: 0.4s; 
+        }
+        .portal-modal.active { opacity: 1; pointer-events: all; }
+        
+        .portal-box { 
+            background: #fff; width: 100%; max-width: 500px; 
+            padding: 40px; border-radius: 15px; text-align: center; 
+            border-top: 6px solid var(--uni-gold); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        .portal-options { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
+
+        .btn-portal-select { 
+            display: flex; align-items: center; padding: 18px 25px; 
+            background: #f8f9fa; color: var(--uni-blue); 
+            border: 2px solid #eee; border-radius: 10px; 
+            text-decoration: none; font-weight: 700; font-size: 1.1rem;
+            transition: 0.3s; 
+        }
+        .btn-portal-select i { font-size: 1.5rem; width: 40px; color: var(--uni-gold); }
+        
+        .btn-portal-select:hover { 
+            background: var(--uni-blue); color: #fff; 
+            border-color: var(--uni-blue); transform: translateY(-3px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .hero-title { font-size: 2.5rem; } }
+    </style>
+</head>
+<body>
+
+    {% if show_portal %}
+    <div class="portal-modal active">
+        <div class="portal-box">
+            <h3 style="color:var(--uni-blue); font-family:'Playfair Display'; font-weight:700;">Select Login Portal</h3>
+            <p class="text-muted">Choose your role to continue to SapthaHack '25</p>
+            
+            <div class="portal-options">
+                <a href="/participant" class="btn-portal-select">
+                    <i class="fas fa-user-graduate"></i>
+                    <div>
+                        <div>Participant</div>
+                        <small style="font-weight:400; font-size:0.8rem; opacity:0.8;">Student / Staff Registration</small>
+                    </div>
+                </a>
+
+                <a href="/judge" class="btn-portal-select">
+                    <i class="fas fa-gavel"></i>
+                    <div>
+                        <div>Jury / Judge</div>
+                        <small style="font-weight:400; font-size:0.8rem; opacity:0.8;">Evaluation Panel</small>
+                    </div>
+                </a>
+
+                <a href="/admin" class="btn-portal-select">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <div>Admin Console</div>
+                        <small style="font-weight:400; font-size:0.8rem; opacity:0.8;">Event Controls</small>
+                    </div>
+                </a>
+            </div>
+
+            <a href="/" style="display:inline-block; margin-top:25px; color:#999; text-decoration:none; font-size:0.9rem; border-bottom:1px dashed #ccc;">
+                <i class="fas fa-times me-1"></i> Close & Return Home
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="top-bar">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <i class="fas fa-phone-alt"></i> +91-9900072632
+                <span class="mx-2">|</span>
+                <i class="fas fa-envelope"></i> admissions@snpsu.edu.in
+            </div>
+            <div class="d-none d-md-block">
+                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="https://th.bing.com/th/id/OIP.P9wMn0i2mtoBlZpbKwIjZQHaD_?w=317&h=180&c=7&r=0&o=7&cb=ucfimg2&dpr=1.3&pid=1.7&rm=3&ucfimg=1" alt="Sapthagiri NPS University">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://snpsu.edu.in/about-us/">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://snpsu.edu.in/admission/">Admissions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://snpsu.edu.in/departments/">Academics</a></li>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-hackathon-nav" href="/portal-select"><i class="fas fa-code me-2"></i>SAPTHAHACK '25</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-inner">
+            <div class="carousel-item active" style="background-image: url('https://snpsu.edu.in/wp-content/uploads/2025/05/Website-5-7_0005_View-1-1024x731.jpg');">
+                <div class="overlay">
+                    <div class="hero-content">
+                        <div class="hero-title">Excel in Life</div>
+                        <div class="hero-subtitle">The Biggest Ever Change Seen In University Education In India.</div>
+                        <a href="/portal-select" class="btn btn-hero btn-primary-uni">Explore Programs</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item" style="background-image: url('https://snpsu.edu.in/wp-content/uploads/2025/05/Website-5-7_0008_SAPTHAGIRI-UNIVERSITY-AMPHITHEATRE-1k-1024x731.jpg');">
+                <div class="overlay">
+                    <div class="hero-content">
+                        <div class="hero-title" style="color: var(--uni-gold);">World-Class Campus</div>
+                        <div class="hero-subtitle">State-of-the-art infrastructure for holistic learning.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item" style="background-image: url('https://snpsu.edu.in/wp-content/uploads/2025/05/Website-5-7_0003_SAPTHAGIRI-UNIVERSITY-A-BLOCK-reception-AREA_r27-1024x731.jpg');">
+                <div class="overlay">
+                    <div class="hero-content">
+                        <div class="hero-title">SAPTHAHACK 2025</div>
+                        <a href="/portal-select" class="btn btn-hero btn-primary-uni">Register Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+    </div>
+
+    <div class="section-padding">
+        <div class="container">
+            <div class="section-title"><h2>Our Infrastructure</h2></div>
+            <div class="row g-4">
+                <div class="col-md-4"><img src="https://snpsu.edu.in/wp-content/uploads/2025/05/Website-5-7_0009_Lab-1-1024x731.jpg" class="gallery-img" alt="Advanced Labs"></div>
+                <div class="col-md-4"><img src="https://snpsu.edu.in/wp-content/uploads/2025/05/Website-5-7_0000_WhatsApp-Image-2024-11-12-at-11.16.18-AM-1024x731.jpg" class="gallery-img" alt="Campus Greenery"></div>
+                <div class="col-md-4"><img src="https://snpsu.edu.in/wp-content/uploads/2025/05/Website-5-7_0001_WhatsApp-Image-2024-11-12-at-11.16.19-AM-1024x731.jpg" class="gallery-img" alt="Academic Block"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-padding bg-light">
+        <div class="container">
+            <div class="section-title"><h2>Visionary Leadership</h2></div>
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="leader-card">
+                        <img src="https://snpsu.edu.in/wp-content/uploads/2025/09/VC-Mam.jpg" class="leader-img" alt="Vice Chancellor">
+                        <div class="leader-name">Dr. Jayanthi V</div>
+                        <div class="leader-role">Vice Chancellor</div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="leader-card">
+                        <img src="https://snpsu.edu.in/wp-content/uploads/2025/09/Gurucharn-Singh-Sir.jpg" class="leader-img" alt="Registrar">
+                        <div class="leader-name">Prof. Gurucharan Singh</div>
+                        <div class="leader-role">Chief HR Officer</div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="leader-card">
+                        <img src="https://snpsu.edu.in/wp-content/uploads/2025/05/Engnering-Dean.jpg" class="leader-img" alt="Dean">
+                        <div class="leader-name">Dr. N.C. Mahendra Babu</div>
+                        <div class="leader-role">Dean - Engineering</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h4>Sapthagiri NPS University</h4>
+                    <p>#14/5, Chikkasandra, Hesarghatta Main Road,<br>Bengaluru – 560057</p>
+                    <p><i class="fas fa-phone-alt me-2"></i> +91-9900072632</p>
+                    <p><i class="fas fa-envelope me-2"></i> admissions@snpsu.edu.in</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h4>Quick Links</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="https://snpsu.edu.in/about-us/">About Us</a></li>
+                        <li><a href="https://snpsu.edu.in/admission/">Admissions</a></li>
+                        <li><a href="/portal-select" style="color:var(--uni-gold); font-weight:bold;">SapthaHack Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h4>Location</h4>
+                    <div style="width: 100%; height: 150px; background: #224; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+                        <i class="fas fa-map-marked-alt fa-3x" style="color:rgba(255,255,255,0.3);"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">&copy; 2025 Sapthagiri NPS University. All Rights Reserved.</div>
+        </div>
+    </footer>
+
+    <div class="chat-float-btn" onclick="toggleChat()">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <div class="chat-box-container" id="chatBox">
+        <div class="chat-header">
+            <span><i class="fas fa-robot me-2"></i>SapthaBot Assistant</span>
+            <span class="close-chat" onclick="toggleChat()"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message assistant"><span class="text">Hello! I'm SapthaBot. Ask me about Admissions, Courses, or the Hackathon!</span></div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off" onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Chatbot Logic
+        const chatBox = document.getElementById('chatBox');
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+
+        function toggleChat() { chatBox.classList.toggle('active'); if(chatBox.classList.contains('active')) userInput.focus(); }
+        function handleKeyPress(e) { if(e.key === 'Enter') sendMessage(); }
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.innerHTML = `<span class="text">${text}</span>`;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const msg = userInput.value.trim();
+            if (!msg) return;
+            addMessage(msg, 'user');
+            userInput.value = '';
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.innerHTML = '<span class="text"><i>Typing...</i></span>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('/bot/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: msg})
+                });
+                const data = await response.json();
+                chatMessages.removeChild(typingDiv);
+                addMessage(data.reply, 'assistant');
+            } catch (error) {
+                chatMessages.removeChild(typingDiv);
+                addMessage("⚠️ SapthaBot is offline.", 'assistant');
+            }
+        }
+    </script>
+</body>
+</html>

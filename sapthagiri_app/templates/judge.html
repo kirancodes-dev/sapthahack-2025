@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Judge Portal | SapthaHack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --uni-blue: #003366; --uni-gold: #FFCC00; }
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
+        
+        .login-card { max-width: 400px; margin: 80px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--uni-gold); }
+        .header { background: var(--uni-blue); color: white; padding: 15px 0; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .team-card { background: white; border-radius: 10px; border: 1px solid #eee; padding: 20px; transition: 0.3s; height: 100%; position: relative; overflow: hidden; }
+        .team-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: var(--uni-gold); }
+        
+        .score-badge { position: absolute; top: 15px; right: 15px; background: #eef; color: var(--uni-blue); padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .score-badge.graded { background: #d4edda; color: #155724; }
+        
+        .range-wrap { margin-bottom: 15px; }
+        .range-label { display: flex; justify-content: space-between; font-weight: 500; font-size: 0.9rem; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    {% if mode == 'login' %}
+    <div class="container">
+        <div class="login-card text-center">
+            <h3 class="mb-4" style="color:var(--uni-blue)"><i class="fas fa-gavel me-2"></i>Judge Login</h3>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}{% for c, m in messages %}<div class="alert alert-{{ 'success' if c=='success' else 'danger' }}">{{ m }}</div>{% endfor %}{% endif %}
+            {% endwith %}
+
+            <form action="/judge" method="POST">
+                <input type="email" name="email" class="form-control mb-3" placeholder="Email Address" required>
+                <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
+                <button class="btn btn-primary w-100 py-2 fw-bold" style="background:var(--uni-blue);">LOGIN</button>
+            </form>
+            <div class="mt-3 text-muted small">Credentials provided by Administrator</div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h4 class="m-0"><i class="fas fa-balance-scale me-2"></i>Evaluation Panel</h4>
+            <div class="d-flex align-items-center gap-3">
+                <span>Welcome, <b>{{ judge_name }}</b></span>
+                <a href="/judge/logout" class="btn btn-outline-light btn-sm">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for c, m in messages %}<div class="alert alert-{{ 'success' if c=='success' else 'danger' }}">{{ m }}</div>{% endfor %}{% endif %}
+        {% endwith %}
+
+        <h5 class="mb-4 text-muted border-bottom pb-2">Assigned Teams</h5>
+        
+        <div class="row g-4">
+            {% for t in teams %}
+            <div class="col-md-6 col-lg-4">
+                <div class="team-card">
+                    {% if t.my_score %}
+                        <div class="score-badge graded"><i class="fas fa-check-circle me-1"></i>Score: {{ t.my_score }}</div>
+                    {% else %}
+                        <div class="score-badge">Pending</div>
+                    {% endif %}
+                    
+                    <h5 class="fw-bold text-primary">{{ t.team_name }}</h5>
+                    <p class="small text-muted mb-2">{{ t.id }}</p>
+                    <div class="mb-3">
+                        <span class="badge bg-secondary">{{ t.problem_statement }}</span>
+                        <span class="badge bg-light text-dark border">ID: {{ t.team_id }}</span>
+                    </div>
+                    
+                    {% if t.ppt_file %}
+                        <a href="{{ t.ppt_file }}" target="_blank" class="btn btn-sm btn-outline-info w-100 mb-2"><i class="fas fa-download me-2"></i>View PPT</a>
+                    {% else %}
+                        <button class="btn btn-sm btn-light w-100 mb-2" disabled>No PPT Uploaded</button>
+                    {% endif %}
+
+                    <button class="btn btn-primary w-100" onclick="openGradeModal('{{ t.id }}', '{{ t.team_name }}')">
+                        <i class="fas fa-star me-2"></i>Evaluate
+                    </button>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center py-5 text-muted">No teams assigned yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="modal fade" id="gradeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Evaluate <span id="modalTeamName" class="text-primary fw-bold"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="/judge/score" method="POST">
+                    <input type="hidden" name="team_email" id="modalTeamEmail">
+                    
+                    <div class="modal-body">
+                        <p class="small text-muted">Rate each criteria from 1 to 10.</p>
+                        
+                        <div class="range-wrap">
+                            <div class="range-label"><span>Innovation & Creativity</span> <span class="fw-bold text-primary">0</span></div>
+                            <input type="range" name="innovation" class="form-range" min="0" max="10" step="1" oninput="updateLabel(this)">
+                        </div>
+
+                        <div class="range-wrap">
+                            <div class="range-label"><span>Technology Stack</span> <span class="fw-bold text-primary">0</span></div>
+                            <input type="range" name="tech_stack" class="form-range" min="0" max="10" step="1" oninput="updateLabel(this)">
+                        </div>
+
+                        <div class="range-wrap">
+                            <div class="range-label"><span>Presentation & Pitch</span> <span class="fw-bold text-primary">0</span></div>
+                            <input type="range" name="presentation" class="form-range" min="0" max="10" step="1" oninput="updateLabel(this)">
+                        </div>
+
+                        <div class="range-wrap">
+                            <div class="range-label"><span>Feasibility & Impact</span> <span class="fw-bold text-primary">0</span></div>
+                            <input type="range" name="feasibility" class="form-range" min="0" max="10" step="1" oninput="updateLabel(this)">
+                        </div>
+
+                        <div class="range-wrap">
+                            <div class="range-label"><span>UI/UX & Design</span> <span class="fw-bold text-primary">0</span></div>
+                            <input type="range" name="ui_ux" class="form-range" min="0" max="10" step="1" oninput="updateLabel(this)">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-success fw-bold">Submit Score</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openGradeModal(email, name) {
+            document.getElementById('modalTeamEmail').value = email;
+            document.getElementById('modalTeamName').innerText = name;
+            new bootstrap.Modal(document.getElementById('gradeModal')).show();
+        }
+
+        function updateLabel(input) {
+            input.previousElementSibling.lastElementChild.innerText = input.value;
+        }
+    </script>
+    {% endif %}
+</body>
+</html>

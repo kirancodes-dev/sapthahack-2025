@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Leaderboard | SapthaHack '25</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --uni-blue: #003366; --uni-gold: #FFCC00; }
+        body { background-color: #f4f6f9; font-family: 'Poppins', sans-serif; }
+        
+        /* HEADER STYLES */
+        .header-bar {
+            background: var(--uni-blue); color: #fff; padding: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-bottom: 5px solid var(--uni-gold);
+        }
+        .brand-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; }
+        
+        /* LIVE INDICATOR ANIMATION */
+        .live-badge {
+            background: #dc3545; color: #fff; padding: 5px 15px; border-radius: 20px;
+            font-weight: 700; font-size: 0.9rem; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .blink-dot {
+            width: 10px; height: 10px; background: #fff; border-radius: 50%;
+            animation: blinker 1.5s linear infinite;
+        }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* TABLE STYLES */
+        .leaderboard-card {
+            background: #fff; margin-top: -30px; border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden;
+            width: 90%; margin-left: auto; margin-right: auto;
+        }
+        .table thead { background: #e9ecef; color: var(--uni-blue); text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+        .table th, .table td { padding: 20px; vertical-align: middle; }
+        .rank-circle {
+            width: 40px; height: 40px; background: #eee; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #555;
+        }
+        
+        /* TOP 3 HIGHLIGHTS */
+        tr.rank-1 .rank-circle { background: #FFD700; color: #000; box-shadow: 0 0 10px #FFD700; } /* Gold */
+        tr.rank-2 .rank-circle { background: #C0C0C0; color: #000; } /* Silver */
+        tr.rank-3 .rank-circle { background: #CD7F32; color: #fff; } /* Bronze */
+        
+        tr.rank-1 { background-color: #fffbeb; } /* Subtle highlight for winner */
+
+        .score-display { font-size: 1.5rem; font-weight: 700; color: var(--uni-blue); }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <div class="d-flex align-items-center">
+            <div class="brand-title">SAPTHAHACK <span style="color:var(--uni-gold)">LEADERBOARD</span></div>
+        </div>
+        <div class="live-badge">
+            <div class="blink-dot"></div> LIVE UPDATES
+        </div>
+    </div>
+
+    <div class="container-fluid mb-5" style="padding-top: 50px;">
+        <div class="leaderboard-card">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="10%">Rank</th>
+                        <th width="40%">Team Name</th>
+                        <th width="30%">Problem Statement</th>
+                        <th class="text-center" width="20%">Total Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in teams %}
+                    <tr class="rank-{{ loop.index }}">
+                        <td class="text-center"><div class="rank-circle mx-auto">{{ loop.index }}</div></td>
+                        <td>
+                            <div class="fw-bold" style="font-size: 1.2rem;">{{ t.name }}</div>
+                            <small class="text-muted">Lead: {{ t.lead }}</small>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ t.ps }}</span></td>
+                        <td class="text-center">
+                            <div class="score-display">{{ t.score }}</div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            <h4>Waiting for Judges to submit scores...</h4>
+                            <i class="fas fa-stopwatch fa-2x mt-2"></i>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Refresh the page every 30 seconds (30000 milliseconds)
+        setTimeout(function(){
+           window.location.reload(1);
+        }, 30000);
+
+        // Optional: Keyboard shortcut (Press 'R') to force refresh immediately
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'r' || event.key === 'R') {
+                window.location.reload();
+            }
+        });
+    </script>
+
+</body>
+</html>
