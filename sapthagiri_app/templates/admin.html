@@ -2,345 +2,210 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard | SapthaHack</title>
+    <title>Admin Console</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --uni-blue: #003366; --uni-gold: #FFCC00; --bg-color: #f4f6f9; --text-color: #333; --card-bg: #fff; }
-        [data-theme="dark"] { --uni-blue: #1a1a1a; --uni-gold: #FFD700; --bg-color: #121212; --text-color: #e0e0e0; --card-bg: #1e1e1e; }
+        :root { --navy: #003366; --gold: #FFCC00; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
         
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Segoe UI', sans-serif; transition: 0.3s; }
+        /* Navbar */
+        .navbar { background: var(--navy) !important; border-bottom: 4px solid var(--gold); }
+        .btn-logout { border: 1px solid rgba(255,255,255,0.5); color: #fff; }
+        .btn-logout:hover { background: #fff; color: var(--navy); }
         
-        /* SIDEBAR */
-        .sidebar { width: 260px; height: 100vh; background: var(--uni-blue); color: #fff; position: fixed; padding: 20px; transition: 0.3s; }
-        .sidebar h4 { font-weight: 700; margin-bottom: 40px; color: var(--uni-gold); letter-spacing: 1px; }
-        .nav-link { color: rgba(255,255,255,0.7); padding: 12px 15px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 600; transform: translateX(5px); }
+        /* Cards */
+        .admin-card {
+            background: #fff; border: none; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden;
+            height: 100%;
+        }
+        .card-header-navy { background: var(--navy); color: #fff; padding: 15px; font-weight: bold; }
+        .card-header-gold { background: var(--gold); color: var(--navy); padding: 15px; font-weight: bold; }
         
-        /* CONTENT */
-        .main-content { margin-left: 260px; padding: 30px; }
-        .card-custom { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); background: var(--card-bg); padding: 20px; margin-bottom: 20px; }
+        /* Form Elements */
+        .form-label { font-size: 0.85rem; font-weight: 700; color: #555; text-transform: uppercase; }
+        .form-control, .form-select { border: 2px solid #e0e0e0; padding: 10px; }
+        .form-control:focus { border-color: var(--navy); box-shadow: none; }
         
-        /* STAT CARDS */
-        .stat-box { display: flex; align-items: center; justify-content: space-between; padding: 20px; border-radius: 12px; color: white; }
-        .stat-num { font-size: 2.5rem; font-weight: 700; }
+        /* Buttons */
+        .btn-navy { background: var(--navy); color: #fff; width: 100%; padding: 12px; font-weight: bold; }
+        .btn-navy:hover { background: #335588; color: #fff; }
+        .btn-gold { background: var(--gold); color: var(--navy); width: 100%; padding: 12px; font-weight: bold; }
+        .btn-gold:hover { background: #ffd633; }
         
-        /* TABLE & SEARCH */
-        .search-bar { max-width: 300px; border-radius: 20px; border: 1px solid #ddd; padding: 8px 15px; }
-        .table { color: var(--text-color); }
-        .table thead { background: rgba(0,0,0,0.05); }
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .status-pending { background: #ffeeba; color: #856404; }
-        .status-approved { background: #d4edda; color: #155724; }
-
-        /* DARK MODE TOGGLE */
-        .theme-toggle { position: absolute; bottom: 20px; left: 20px; cursor: pointer; color: rgba(255,255,255,0.7); }
+        /* Table */
+        .table thead { background: var(--navy); color: #fff; }
+        .rank-badge { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; background: var(--gold); color: var(--navy); border-radius: 50%; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h4><i class="fas fa-shield-alt me-2"></i>ADMIN PRO</h4>
-        <nav class="nav flex-column">
-            <div class="nav-link active" onclick="showSection('dashboard', this)"><i class="fas fa-th-large me-2"></i>Dashboard</div>
-            <div class="nav-link" onclick="showSection('create-event', this)"><i class="fas fa-calendar-plus me-2"></i>Create Event</div>
-            <div class="nav-link" onclick="showSection('teams', this)"><i class="fas fa-users me-2"></i>Teams</div>
-            <div class="nav-link" onclick="showSection('judges', this)"><i class="fas fa-gavel me-2"></i>Judges</div>
-            <a href="/analytics" class="nav-link" target="_blank"><i class="fas fa-chart-line me-2"></i>Analytics ↗</a>
-            <a href="/logout" class="nav-link text-danger mt-5"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
-        </nav>
-        <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon me-2"></i>Dark Mode</div>
-    </div>
+<nav class="navbar navbar-dark px-4 shadow">
+    <span class="navbar-brand fw-bold"><i class="fas fa-user-shield me-2"></i>Admin Console</span>
+    <a href="/admin/logout" class="btn btn-logout btn-sm rounded-pill px-3">Logout</a>
+</nav>
 
-    <div class="main-content">
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div id="flash-data" data-messages='{{ messages | tojson | safe }}'></div>
-            {% endif %}
-        {% endwith %}
+<div class="container mt-5 mb-5">
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-        <div id="sec-dashboard">
-            <h3 class="mb-4">Overview</h3>
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="stat-box" style="background: linear-gradient(45deg, #4facfe, #00f2fe);">
-                        <div><h6>Total Teams</h6><div class="stat-num count-up" data-target="{{ stats.total_teams }}">0</div></div>
-                        <i class="fas fa-users fa-3x opacity-50"></i>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-box" style="background: linear-gradient(45deg, #43e97b, #38f9d7);">
-                        <div><h6>Submissions</h6><div class="stat-num count-up" data-target="{{ stats.total_subs }}">0</div></div>
-                        <i class="fas fa-file-upload fa-3x opacity-50"></i>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-box" style="background: linear-gradient(45deg, #fa709a, #fee140);">
-                        <div><h6>Judges</h6><div class="stat-num count-up" data-target="{{ stats.total_judges }}">0</div></div>
-                        <i class="fas fa-gavel fa-3x opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            
-            {% if event and event.event_name %}
-            <div class="card-custom">
-                <h4><i class="fas fa-bullhorn me-2"></i>Current Event: {{ event.event_name }}</h4>
-                <p class="mb-1"><b>Type:</b> {{ event.event_type }} | <b>Date:</b> {{ event.event_date }}</p>
-                <p><b>WhatsApp Link:</b> <a href="{{ event.whatsapp_link }}" target="_blank">{{ event.whatsapp_link }}</a></p>
-                <button class="btn btn-sm btn-outline-primary" onclick="showSection('create-event', document.querySelectorAll('.nav-link')[1])">Edit Event Settings</button>
-            </div>
-            {% endif %}
-        </div>
+    <div class="row g-4">
         
-        <div id="sec-create-event" style="display:none;">
-            <h3><i class="fas fa-calendar-check me-2"></i>Event Configuration</h3>
-            <div class="card-custom">
-                <form action="/admin/create_event" method="POST">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label>Event Name</label>
+        <div class="col-md-5">
+            <div class="admin-card">
+                <div class="card-header-navy"><i class="fas fa-cogs me-2"></i>Event Settings</div>
+                <div class="card-body p-4">
+                    <form action="/admin/create_event" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Event Name</label>
                             <input type="text" name="event_name" class="form-control" value="{{ event.event_name }}" required>
                         </div>
-                        <div class="col-md-3">
-                            <label>Type</label>
-                            <select name="event_type" class="form-select">
-                                <option>Hackathon</option><option>Ideathon</option><option>Project Expo</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label>Date</label>
-                            <input type="date" name="event_date" class="form-control" value="{{ event.event_date }}" required>
-                        </div>
                         
-                        <div class="col-12">
-                            <label class="text-success fw-bold"><i class="fab fa-whatsapp me-2"></i>WhatsApp/Group Link</label>
-                            <input type="url" name="whatsapp_link" class="form-control" placeholder="https://chat.whatsapp.com/..." value="{{ event.whatsapp_link }}" required>
-                            <small class="text-muted">This link will be emailed to Team Leads automatically after registration.</small>
-                        </div>
-
-                        <div class="col-12"><h5 class="mt-3 border-bottom pb-2">Team Rules</h5></div>
-                        <div class="col-md-4">
-                            <label>Max Students</label>
-                            <input type="number" name="max_students" class="form-control" value="{{ event.team_config.max_students if event.team_config else 4 }}">
-                        </div>
-                        <div class="col-md-4">
-                            <label>Max Staff</label>
-                            <input type="number" name="max_staff" class="form-control" value="{{ event.team_config.max_staff if event.team_config else 2 }}">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-center">
-                            <div class="form-check mt-4">
-                                <input class="form-check-input" type="checkbox" name="allow_mixed" checked>
-                                <label class="form-check-label">Allow Mixed (Staff + Student)</label>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label text-danger">Event Mode</label>
+                                <select name="event_mode" class="form-select">
+                                    <option value="general" {% if event.event_mode == 'general' %}selected{% endif %}>General Event</option>
+                                    <option value="hackathon" {% if event.event_mode == 'hackathon' %}selected{% endif %}>Hackathon (Needs PS)</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label text-primary">Participants</label>
+                                <select name="composition" class="form-select">
+                                    <option value="both" {% if event.team_config.composition == 'both' %}selected{% endif %}>Both (Staff & Student)</option>
+                                    <option value="student" {% if event.team_config.composition == 'student' %}selected{% endif %}>Students Only</option>
+                                    <option value="staff" {% if event.team_config.composition == 'staff' %}selected{% endif %}>Staff Only</option>
+                                </select>
                             </div>
                         </div>
 
-                        <div class="col-12">
-                            <label>Event Rules</label>
-                            <textarea name="rules" class="form-control" rows="4">{{ event.rules }}</textarea>
+                        <div class="mb-3">
+                            <label class="form-label">WhatsApp Group Link</label>
+                            <input type="text" name="social_link" class="form-control" value="{{ event.social_link }}" placeholder="https://chat.whatsapp..." required>
                         </div>
                         
-                        <div class="col-12">
-                            <button class="btn btn-primary w-100 py-2">Save Event Settings</button>
+                        <div class="mb-3">
+                            <label class="form-label">Event Date</label>
+                            <input type="date" name="date" class="form-control" value="{{ event.date }}" required>
                         </div>
-                    </div>
-                </form>
-            </div>
-        </div>
 
-        <div id="sec-teams" style="display:none;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3>Registered Teams</h3>
-                <div class="d-flex gap-2">
-                    <input type="text" id="teamSearch" class="search-bar" placeholder="Search team..." onkeyup="filterTable()">
-                    <a href="/admin/export_csv" class="btn btn-success btn-sm d-flex align-items-center"><i class="fas fa-file-excel me-2"></i>Export</a>
-                </div>
-            </div>
-
-            <div class="card-custom">
-                <table class="table table-hover mb-0" id="teamsTable">
-                    <thead>
-                        <tr><th>Team Name</th><th>Lead Email</th><th>Problem</th><th>Status</th><th>Action</th></tr>
-                    </thead>
-                    <tbody>
-                        {% for email, t in teams.items() %}
-                        <tr>
-                            <td class="fw-bold">{{ t.team_name }}</td>
-                            <td>{{ email }}</td>
-                            <td><span class="badge bg-secondary">{{ t.problem_statement }}</span></td>
-                            <td>
-                                {% if t.payment_status == 'Approved' %}
-                                    <span class="status-badge status-approved">Approved</span>
-                                {% else %}
-                                    <span class="status-badge status-pending">Pending</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if t.payment_status != 'Approved' %}
-                                <form action="/admin/approve_payment" method="POST" style="display:inline;">
-                                    <input type="hidden" name="team_email" value="{{ email }}">
-                                    <button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button>
-                                </form>
-                                {% endif %}
-                                <form action="/admin/delete_team" method="POST" onsubmit="return confirm('Delete Team?');" style="display:inline;">
-                                    <input type="hidden" name="email" value="{{ email }}">
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-
-        <div id="sec-judges" style="display:none;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3>Judges & Jury</h3>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addJudgeModal"><i class="fas fa-plus me-2"></i>New Judge</button>
-            </div>
-            <div class="card-custom">
-                <table class="table table-hover">
-                    <thead><tr><th>Name</th><th>Email</th><th>Role/ID</th><th>Post</th><th>Action</th></tr></thead>
-                    <tbody>
-                        {% for email, j in judges.items() %}
-                        <tr>
-                            <td>{{ j.name }}</td>
-                            <td>{{ email }}</td>
-                            <td>{{ j.role_id }}</td>
-                            <td><span class="badge bg-info text-dark">{{ j.post }}</span></td>
-                            <td>
-                                <form action="/admin/delete_judge" method="POST" style="display:inline;">
-                                    <input type="hidden" name="email" value="{{ email }}">
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="modal fade" id="addJudgeModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header"><h5>Add New Judge/Jury</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-                <form action="/admin/add_judge" method="POST">
-                    <div class="modal-body">
-                        <div class="mb-2"><label>Full Name</label><input type="text" name="name" class="form-control" required></div>
-                        <div class="mb-2"><label>Email</label><input type="email" name="email" class="form-control" required></div>
-                        <div class="mb-2"><label>ID (SRN/Staff ID)</label><input type="text" name="role_id" class="form-control" required></div>
-                        <div class="mb-2"><label>Post/Designation</label>
-                            <select name="post" class="form-select">
-                                <option value="Professor">Professor</option>
-                                <option value="Industry Expert">Industry Expert</option>
-                                <option value="Alumni">Alumni</option>
-                                <option value="Student Jury">Student Jury</option>
-                            </select>
-                        </div>
-                        <div class="mb-2"><label>Domain</label>
-                            <select name="domain" class="form-select"><option>AI/ML</option><option>Web/App</option><option>IoT/Hardware</option><option>Open Innovation</option></select>
-                        </div>
-                    </div>
-                    <div class="modal-footer"><button class="btn btn-primary">Create & Email Credentials</button></div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="card-custom border-danger mt-5" style="border: 2px solid #dc3545;">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h4 class="text-danger"><i class="fas fa-radiation-alt me-2"></i>Danger Zone</h4>
-                    <p class="text-muted mb-0">Reset the entire event. This deletes all Teams, Judges, and Scores.</p>
-                </div>
-                <button class="btn btn-outline-danger fw-bold" onclick="showNuclearModal()">
-                    <i class="fas fa-trash-alt me-2"></i>RESET EVENT
-                </button>
-            </div>
-        </div>
-
-        <div class="modal fade" id="nuclearModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content border-danger">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>CONFIRM DATA WIPE</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form action="/admin/nuclear_reset" method="POST">
-                        <div class="modal-body text-center">
-                            <h2 class="text-danger mb-3"><i class="fas fa-skull-crossbones fa-2x"></i></h2>
-                            <p class="fw-bold">Are you absolutely sure?</p>
-                            <p>This action cannot be undone. All registered teams, scores, and judges will be permanently deleted.</p>
-                            
-                            <label class="form-label text-start w-100 mt-3">Type <code>DELETE_EVERYTHING_2025</code> to confirm:</label>
-                            <input type="text" name="confirm_code" class="form-control border-danger text-danger fw-bold text-center" placeholder="Type the code here" required>
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button class="btn btn-danger fw-bold">WIPE EVERYTHING</button>
-                        </div>
+                        <button class="btn btn-gold rounded-pill mt-2">UPDATE CONFIGURATION</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <script>
-            function showNuclearModal() {
-                new bootstrap.Modal(document.getElementById('nuclearModal')).show();
-            }
-        </script>
+        <div class="col-md-7">
+            <div class="admin-card">
+                <div class="card-header-gold"><i class="fas fa-gavel me-2"></i>Add Judge</div>
+                <div class="card-body p-4">
+                    <form action="/admin/add_judge" method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Judge Name</label>
+                                <input type="text" name="name" class="form-control" placeholder="Dr. Smith" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" name="email" class="form-control" placeholder="judge@college.edu" required>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">ID / Designation</label>
+                                <input type="text" name="role_id" class="form-control" placeholder="Professor / HOD" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Domain Expertise</label>
+                                <input type="text" name="domain" class="form-control" placeholder="AI, IoT, CyberSec" required>
+                            </div>
+                        </div>
+                        <button class="btn btn-navy rounded-pill">ADD JUDGE & EMAIL CREDENTIALS</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // 1. TOAST NOTIFICATIONS
-        const flashData = document.getElementById('flash-data');
-        if (flashData) {
-            const messages = JSON.parse(flashData.dataset.messages);
-            messages.forEach(([category, msg]) => {
-                Swal.fire({
-                    toast: true, position: 'top-end', icon: category === 'success' ? 'success' : 'error',
-                    title: msg, showConfirmButton: false, timer: 3000
-                });
-            });
-        }
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="admin-card">
+                <div class="card-header-navy d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-chart-line me-2"></i>Live Event Status</span>
+                    <form action="/admin/announce" method="POST" onsubmit="return confirm('Are you sure? This will email all participants!');">
+                        <button class="btn btn-gold btn-sm px-4 rounded-pill">📢 ANNOUNCE WINNERS</button>
+                    </form>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0 align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Team Name</th>
+                                    <th>Lead Email</th>
+                                    <th>Topic / PS</th>
+                                    <th>Submission</th>
+                                    <th>Score</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for t in teams %}
+                                <tr>
+                                    <td>
+                                        {% if t.rank != '-' %}
+                                            <span class="rank-badge">{{ t.rank }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold text-start">{{ t.team_name }}</td>
+                                    <td class="text-start">{{ t.lead_email }}</td>
+                                    <td>{{ t.problem_statement }}</td>
+                                    <td>
+                                        {% if t.ppt_file != 'N/A' %}
+                                            <a href="/static/uploads/{{ t.ppt_file }}" target="_blank" class="badge bg-primary text-decoration-none">PPT</a>
+                                        {% else %}
+                                            <span class="badge bg-secondary">No</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold fs-5">{{ t.score }}</td>
+                                    <td>
+                                        {% if t.status == 'Evaluated' %}
+                                            <span class="badge bg-success">Graded</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7" class="py-5 text-muted">
+                                        <i class="fas fa-users-slash fa-2x mb-3 d-block"></i>
+                                        No teams have registered yet.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        // 2. TAB SWITCHING
-        function showSection(id, el) {
-            ['dashboard', 'create-event', 'teams', 'judges'].forEach(s => document.getElementById('sec-'+s).style.display = 'none');
-            document.getElementById('sec-'+id).style.display = 'block';
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            if(el) el.classList.add('active');
-        }
-
-        // 3. DARK MODE
-        function toggleTheme() {
-            const body = document.body;
-            body.dataset.theme = body.dataset.theme === "dark" ? "light" : "dark";
-            localStorage.setItem("theme", body.dataset.theme);
-        }
-        if(localStorage.getItem("theme") === "dark") document.body.dataset.theme = "dark";
-
-        // 4. ANIMATED COUNTERS
-        document.querySelectorAll('.count-up').forEach(el => {
-            const target = +el.getAttribute('data-target');
-            let count = 0; const inc = Math.ceil(target / 50);
-            const update = () => { count += inc; if(count < target) { el.innerText = count; requestAnimationFrame(update); } else { el.innerText = target; } };
-            update();
-        });
-
-        // 5. SEARCH FILTER
-        function filterTable() {
-            const input = document.getElementById("teamSearch").value.toLowerCase();
-            const rows = document.querySelectorAll("#teamsTable tbody tr");
-            rows.forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
-            });
-        }
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -2,173 +2,274 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal | SapthaHack</title>
+    <title>Participant Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --primary: #003366; --accent: #FFCC00; --bg: #f4f6f9; --card-bg: #fff; --text: #333; }
-        [data-theme="dark"] { --primary: #003366; --accent: #FFD700; --bg: #121212; --card-bg: #1e1e1e; --text: #e0e0e0; }
+        /* --- GOLD & NAVY THEME --- */
+        :root { --navy: #003366; --gold: #FFCC00; --light: #f8f9fa; }
         
-        body { background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; transition: 0.3s; }
-        .classic-card { background: var(--card-bg); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 30px; margin-bottom: 20px; border: none; }
-        .header { background: var(--primary); color: white; padding: 15px 0; margin-bottom: 30px; }
-        .timer-box { background: var(--accent); color: #000; padding: 10px 20px; border-radius: 30px; font-weight: bold; display: inline-block; }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        .form-control { background: var(--bg); color: var(--text); border: 1px solid rgba(0,0,0,0.1); }
-        .btn-action { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: 600; }
-        .theme-btn { cursor: pointer; color: white; font-size: 1.2rem; }
+        .navbar { background: var(--navy) !important; border-bottom: 4px solid var(--gold); }
+        .text-navy { color: var(--navy); }
+        .text-gold { color: var(--gold); }
+        
+        .btn-navy { background: var(--navy); color: #fff; border: 2px solid var(--navy); padding: 10px 25px; font-weight: 600; }
+        .btn-navy:hover { background: #fff; color: var(--navy); }
+        
+        .btn-gold { background: var(--gold); color: #003366; border: 2px solid var(--gold); padding: 10px 25px; font-weight: 700; }
+        .btn-gold:hover { background: #fff; }
+
+        /* DASHBOARD CARDS */
+        .dashboard-card { 
+            border-radius: 20px; border: none; background: #fff; 
+            box-shadow: 0 10px 30px rgba(0,51,102,0.1); 
+            transition: transform 0.3s; overflow: hidden;
+        }
+        .dashboard-card:hover { transform: translateY(-5px); }
+        
+        /* RANKING CIRCLE */
+        .rank-circle {
+            width: 120px; height: 120px; border-radius: 50%; 
+            background: linear-gradient(135deg, var(--gold), #ffdb4d);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: bold; color: var(--navy);
+            margin: 0 auto 20px; border: 5px solid #fff; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .form-section { display: none; animation: fadeIn 0.5s; }
+        .form-section.active { display: block; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     </style>
 </head>
 <body>
-    
-    <div class="header">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h4 class="m-0 fw-bold">SAPTHAHACK STUDENT</h4>
-            <div class="d-flex align-items-center gap-3">
-                <div class="timer-box"><i class="fas fa-clock me-2"></i><span id="countdown">00:00:00</span></div>
-                <i class="fas fa-moon theme-btn" onclick="toggleTheme()"></i>
-                {% if view == 'dashboard' %}
-                    <a href="/participant/logout" class="text-white text-decoration-none fw-bold">Logout</a>
-                {% endif %}
+
+{% if view == 'dashboard' %}
+    <nav class="navbar navbar-dark px-4 shadow">
+        <span class="navbar-brand fw-bold"><i class="fas fa-graduation-cap me-2"></i>Student Dashboard</span>
+        <a href="/participant/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">Logout</a>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="dashboard-card p-4 text-center h-100 position-relative">
+                    <h6 class="text-muted fw-bold mb-4">CURRENT STANDING</h6>
+                    
+                    {% if team.rank == 1 %}
+                        <div class="rank-circle"><i class="fas fa-trophy"></i></div>
+                        <h2 class="text-navy fw-bold">WINNER!</h2>
+                        <span class="badge bg-success fs-6 rounded-pill">1st Place</span>
+                    {% elif team.status == 'Evaluated' %}
+                        <div class="rank-circle">#{{ team.rank }}</div>
+                        <h3 class="text-navy">Rank {{ team.rank }}</h3>
+                        <p class="text-muted">Score: <b>{{ team.score }}</b> / 30</p>
+                    {% else %}
+                        <div class="rank-circle" style="background:#e2e8f0; color:#aaa;">?</div>
+                        <h4 class="text-muted">Pending</h4>
+                        <p class="small text-muted">Judges are reviewing...</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="dashboard-card p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="text-navy fw-bold m-0">{{ team.team_name }}</h2>
+                        <span class="badge bg-warning text-dark fs-6">{{ team.team_id }}</span>
+                    </div>
+                    <hr>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <small class="text-muted fw-bold">PROBLEM STATEMENT</small>
+                            <p class="fs-5">{{ team.problem_statement }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted fw-bold">SUBMISSIONS</small>
+                            <div class="mt-1">
+                                {% if team.ppt_file != 'N/A' %} <span class="badge bg-success"><i class="fas fa-check"></i> PPT</span> 
+                                {% else %} <span class="badge bg-danger">No PPT</span> {% endif %}
+                                
+                                {% if team.report_file != 'N/A' %} <span class="badge bg-success"><i class="fas fa-check"></i> Report</span> 
+                                {% else %} <span class="badge bg-danger">No Report</span> {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="text-navy border-bottom pb-2 mb-3">Team Members</h5>
+                    {% for m in team.members %}
+                        <div class="d-flex justify-content-between py-2 align-items-center">
+                            <div>
+                                <span class="fw-bold">{{ m.name }}</span> 
+                                <span class="badge bg-light text-dark border ms-2">{{ m.role }}</span>
+                            </div>
+                            <span class="text-muted font-monospace">{{ m.id }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="container" style="max-width: 900px;">
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}{% for c, m in messages %}
-                <div class="alert alert-{{ 'success' if c=='success' else 'danger' }}">{{ m }}</div>
-                {% if c == 'success' %}<script>confetti({particleCount: 150, spread: 70, origin: { y: 0.6 }});</script>{% endif %}
-            {% endfor %}{% endif %}
-        {% endwith %}
+{% else %}
+    <div class="container mt-5 mb-5">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold display-5" style="color:var(--navy);">SAPTHAHACK PORTAL</h1>
+            <p class="text-muted lead">Showcase your innovation to the world.</p>
+        </div>
 
-        {% if view == 'dashboard' %}
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="classic-card">
-                        <div class="d-flex justify-content-between">
-                            <h4 class="text-primary">Team: {{ team.team_name }}</h4>
-                            <span class="badge {{ 'bg-success' if team.payment_status == 'Approved' else 'bg-warning text-dark' }}">{{ team.payment_status }}</span>
+        <div class="d-flex justify-content-center gap-3 mb-4">
+            <button onclick="switchTab('login')" class="btn btn-navy px-5 rounded-pill shadow-sm">Login</button>
+            <button onclick="switchTab('register')" class="btn btn-gold px-5 rounded-pill shadow-sm">Register Team</button>
+        </div>
+
+        <div id="loginForm" class="form-section active mx-auto dashboard-card p-5" style="max-width:450px;">
+            <h3 class="text-center text-navy mb-4 fw-bold">Welcome Back</h3>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} py-2 text-center">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="/participant/login" method="POST">
+                <input type="email" name="email" class="form-control mb-3 p-3 bg-light" placeholder="Lead Email" required>
+                <input type="password" name="password" class="form-control mb-4 p-3 bg-light" placeholder="Password" required>
+                <button class="btn btn-navy w-100 py-3 fw-bold rounded-pill">ENTER DASHBOARD</button>
+            </form>
+        </div>
+
+        <div id="regForm" class="form-section mx-auto dashboard-card p-5" style="max-width:800px;">
+            <div class="text-center mb-4">
+                <h3 class="text-navy fw-bold">New Team Registration</h3>
+                {% if event.event_mode == 'hackathon' %}
+                    <span class="badge bg-warning text-dark"><i class="fas fa-code"></i> Hackathon Mode</span>
+                {% else %}
+                    <span class="badge bg-info"><i class="fas fa-calendar"></i> General Event</span>
+                {% endif %}
+            </div>
+            
+            <form action="/participant/register" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold small text-muted">TEAM NAME</label>
+                        <input type="text" name="team_name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold small text-muted">LEAD NAME</label>
+                        <input type="text" name="lead_name" class="form-control" required>
+                    </div>
+                </div>
+
+                {% if event.event_mode == 'hackathon' %}
+                <div class="mb-4">
+                    <label class="fw-bold small text-danger">PROBLEM STATEMENT</label>
+                    <input type="text" name="problem_statement" class="form-control border-danger" placeholder="Enter Problem ID or Title" required>
+                </div>
+                {% endif %}
+
+                <div class="p-4 bg-light rounded mb-4 border">
+                    <h6 class="text-navy fw-bold mb-3"><i class="fas fa-cloud-upload-alt me-2"></i>Submissions</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Presentation (PPT/PDF)</label>
+                            <input type="file" name="ppt_file" class="form-control" accept=".pdf,.ppt,.pptx" required>
                         </div>
-                        <p class="text-muted">{{ team.lead_email }} | {{ team.problem_statement }}</p>
-                        <hr>
-                        <h6 class="fw-bold">Members</h6>
-                        <div class="row g-2">
-                            <div class="col-6 bg-light p-2 rounded">Lead: {{ team.lead_name }}</div>
-                            {% for s in team.students %}<div class="col-6 bg-light p-2 rounded">{{ s.name }}</div>{% endfor %}
-                        </div>
-                        <div class="mt-4">
-                            <a href="/participant/certificate" class="btn btn-outline-primary w-100"><i class="fas fa-certificate me-2"></i>Download Certificate</a>
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Project Report (PDF)</label>
+                            <input type="file" name="report_file" class="form-control" accept=".pdf" required>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="classic-card text-center border-top border-5 border-warning">
-                        <h5>EVENT PASS</h5>
-                        {% if qr_code %}
-                            <img src="{{ qr_code }}" class="img-fluid my-3 rounded border p-2">
-                        {% else %}
-                            <p>Generating...</p>
-                        {% endif %}
-                        <div class="small fw-bold">{{ team.lead_srn }}</div>
-                    </div>
-                </div>
-            </div>
 
-        {% else %}
-            <ul class="nav nav-pills nav-fill mb-4 bg-white p-2 rounded shadow-sm">
-                <li class="nav-item"><a class="nav-link active" onclick="showTab('register', this)">Register</a></li>
-                <li class="nav-item"><a class="nav-link" onclick="showTab('login', this)">Login</a></li>
-            </ul>
-
-            <div id="tab-login" style="display:none;">
-                <div class="classic-card">
-                    <h3 class="text-center mb-4">Portal Login</h3>
-                    <form action="/participant/login" method="POST">
-                        <input type="email" name="email" class="form-control mb-3" placeholder="Team Lead Email" required>
-                        <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
-                        <button class="btn-action">Login</button>
-                    </form>
-                </div>
-            </div>
-
-            <div id="tab-register">
-                <div class="classic-card">
-                    <h3 class="text-center mb-4">Team Registration</h3>
-                    <form action="/participant/register" method="POST">
-                        <div class="row g-3">
-                            <div class="col-md-6"><label>Team Name</label><input type="text" name="team_name" class="form-control" required></div>
-                            <div class="col-md-6"><label>Problem</label>
-                                <select name="problem_statement" class="form-select" required>
-                                    <option>PS-01: AI</option><option>PS-02: Health</option><option>PS-03: Agri</option>
+                <h5 class="text-navy mb-3 border-bottom pb-2">Team Members</h5>
+                
+                <div id="membersContainer">
+                    {% for i in range(1, 6) %}
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-md-4">
+                            <input type="text" name="member_name_{{i}}" class="form-control form-control-sm" placeholder="Member {{i}} Name">
+                        </div>
+                        
+                        <div class="col-md-3">
+                            {% if event.team_config.composition == 'student' %}
+                                <input type="text" name="member_role_{{i}}" class="form-control form-control-sm bg-light" value="Student" readonly>
+                            {% elif event.team_config.composition == 'staff' %}
+                                <input type="text" name="member_role_{{i}}" class="form-control form-control-sm bg-light" value="Staff" readonly>
+                            {% else %}
+                                <select name="member_role_{{i}}" class="form-select form-select-sm member-role-select" data-index="{{i}}">
+                                    <option value="Student">Student</option>
+                                    <option value="Staff">Staff</option>
                                 </select>
-                            </div>
-                            <div class="col-12"><h6 class="text-primary mt-3">Team Lead</h6></div>
-                            <div class="col-md-6"><input type="text" name="lead_name" class="form-control" placeholder="Name" required></div>
-                            <div class="col-md-6"><input type="text" name="lead_srn" class="form-control" placeholder="USN" required></div>
-                            <div class="col-md-8">
-                                <div class="input-group">
-                                    <input type="email" id="reg_email" name="lead_email" class="form-control" placeholder="Email" required>
-                                    <button type="button" class="btn btn-dark" onclick="getOTP()">Send OTP</button>
-                                </div>
-                            </div>
-                            <div class="col-md-4"><input type="text" name="otp" class="form-control" placeholder="OTP Code" required></div>
-                            <div class="col-md-6"><input type="tel" name="lead_phone" class="form-control" placeholder="Phone" required></div>
-                            <div class="col-md-6"><input type="password" name="password" class="form-control" placeholder="Set Password" required></div>
+                            {% endif %}
                         </div>
-                        <button class="btn-action mt-4">Register Team</button>
-                    </form>
+
+                        <div class="col-md-5">
+                            <input type="text" name="member_id_{{i}}" id="id_field_{{i}}" class="form-control form-control-sm" 
+                                   placeholder="{% if event.team_config.composition == 'staff' %}Enter Staff ID{% else %}Enter SRN{% endif %}">
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
-        {% endif %}
+
+                <div class="mt-4 p-4 rounded" style="background: #eef2ff; border: 1px dashed var(--navy);">
+                    <label class="fw-bold small text-navy">EMAIL VERIFICATION</label>
+                    <div class="input-group mb-2">
+                        <input type="email" id="regEmail" name="lead_email" class="form-control" placeholder="Lead Email" required>
+                        <button type="button" onclick="sendOTP()" class="btn btn-navy">Send OTP</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="password" name="password" class="form-control" placeholder="Create Password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-gold w-100 mt-4 py-3 rounded-pill shadow">REGISTER TEAM</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        // 1. TABS
-        function showTab(id, el) {
-            document.getElementById('tab-register').style.display = 'none';
-            document.getElementById('tab-login').style.display = 'none';
-            document.getElementById('tab-' + id).style.display = 'block';
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            if(el) el.classList.add('active');
+        function switchTab(t) {
+            document.getElementById('loginForm').classList.toggle('active', t==='login');
+            document.getElementById('regForm').classList.toggle('active', t==='register');
+        }
+        
+        // Dynamic Placeholder Logic for "Both" mode
+        function updatePlaceholder(select, index) {
+            let input = document.getElementById('id_field_' + index);
+            if (select.value === 'Student') input.placeholder = "Enter SRN";
+            else input.placeholder = "Enter Staff ID";
         }
 
-        // 2. OTP LOGIC
-        async function getOTP() {
-            const email = document.getElementById('reg_email').value;
-            if(!email) return alert("Enter email first");
-            alert("Sending OTP...");
-            try {
-                const res = await fetch('/participant/send-otp', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({email: email})
+        // attach change listeners to selects added above (avoids inline Jinja in JS)
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.member-role-select').forEach(function(el) {
+                el.addEventListener('change', function() {
+                    updatePlaceholder(this, this.dataset.index);
                 });
-                const data = await res.json();
-                alert(data.message);
-            } catch(e) { alert("Error sending OTP"); }
-        }
+            });
+        });
 
-        // 3. DARK MODE
-        function toggleTheme() {
-            const body = document.body;
-            body.dataset.theme = body.dataset.theme === "dark" ? "light" : "dark";
-            localStorage.setItem("theme", body.dataset.theme);
+        function sendOTP() {
+            let email = document.getElementById('regEmail').value;
+            if(!email.includes('@')) { alert("Enter valid email"); return; }
+            
+            fetch('/participant/send-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email})
+            }).then(r => r.json()).then(d => alert(d.message));
         }
-        if(localStorage.getItem("theme") === "dark") document.body.dataset.theme = "dark";
-
-        // 4. COUNTDOWN TIMER (Set to 24 hours from now)
-        const deadline = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-        setInterval(() => {
-            const now = new Date().getTime();
-            const t = deadline - now;
-            const h = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((t % (1000 * 60)) / 1000);
-            document.getElementById("countdown").innerHTML = `${h}h ${m}m ${s}s`;
-        }, 1000);
     </script>
+{% endif %}
 </body>
 </html>

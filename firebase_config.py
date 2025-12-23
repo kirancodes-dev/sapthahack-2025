@@ -1,15 +1,19 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
+import os
 
-# Check if Firebase is already initialized to avoid errors
+# Apply Windows Fix again to ensure DB thread safety
+os.environ["GRPC_DNS_RESOLVER"] = "native"
+os.environ["GRPC_POLL_STRATEGY"] = "poll"
+
+# Singleton Pattern: Only initialize if not already running
 if not firebase_admin._apps:
     try:
-        # Load the key
         cred = credentials.Certificate("serviceAccountKey.json")
         firebase_admin.initialize_app(cred)
-        print("✅ Firebase Connected via Config!")
+        print("✅ Firebase Database: CONNECTED")
     except Exception as e:
-        print(f"❌ Firebase Config Error: {e}")
+        print(f"❌ DATABASE ERROR: {e}")
+        print("⚠️ Ensure 'serviceAccountKey.json' is in the project folder!")
 
-# Create the Database Client variable that other files will import
 db = firestore.client()

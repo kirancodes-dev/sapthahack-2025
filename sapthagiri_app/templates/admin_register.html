@@ -1,54 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Create Admin | SapthaHack</title>
+    <title>Initialize Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        body { background: #f4f6f9; font-family: 'Poppins', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .reg-card { 
-            background: #fff; padding: 40px; border-radius: 8px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
-            width: 100%; max-width: 450px; 
-            border-top: 5px solid #FFCC00; 
-        }
-        .btn-classic { background: #FFCC00; color: #000; width: 100%; padding: 12px; border: none; border-radius: 5px; font-weight: 600; text-transform: uppercase; transition: 0.3s; }
-        .btn-classic:hover { background: #e6b800; }
-        .form-control { background: #fff; border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; }
-        .secret-box { background: #fff9e6; border: 1px dashed #FFCC00; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-    </style>
 </head>
-<body>
-    <div class="reg-card">
-        <h3 class="text-center fw-bold mb-4" style="color:#003366;">CREATE ADMIN</h3>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}{% for c, m in messages %}<div class="alert alert-danger py-2 small mb-3">{{ m }}</div>{% endfor %}{% endif %}
-        {% endwith %}
+<body class="bg-secondary d-flex align-items-center justify-content-center" style="height: 100vh;">
 
-        <form method="POST">
-            <label class="small text-muted fw-bold mb-1">Full Name</label>
-            <input type="text" name="name" class="form-control" required>
-
-            <label class="small text-muted fw-bold mb-1">Email Address</label>
-            <input type="email" name="email" class="form-control" required>
-
-            <label class="small text-muted fw-bold mb-1">Password</label>
-            <input type="password" name="password" class="form-control" required>
-            
-            <div class="secret-box">
-                <label class="small text-danger fw-bold mb-1">MASTER SECRET KEY</label>
-                <input type="password" name="secret_key" class="form-control mb-1" placeholder="Enter Server Authorization Key" required>
-                <small class="text-muted" style="font-size: 0.75rem;">* Required for new admin creation</small>
-            </div>
-
-            <button class="btn-classic">Generate Credentials</button>
-        </form>
-
-        <div class="text-center mt-3">
-            <a href="/admin" class="small text-muted text-decoration-none">← Back to Login</a>
-        </div>
+<div class="card p-4 shadow-lg" style="width: 450px; border-radius: 15px;">
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-danger">INITIALIZE ADMIN</h3>
+        <small class="text-muted">Master Authorization Required</small>
     </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} py-2 small">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="/admin/register" method="POST">
+        <div class="mb-3">
+            <label class="form-label small fw-bold">NEW ADMIN EMAIL</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label small fw-bold">CREATE PASSWORD</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        
+        <div class="p-3 mb-3 bg-light border rounded">
+            <label class="form-label small fw-bold text-danger">MASTER KEY</label>
+            <input type="password" name="secret_key" class="form-control" placeholder="Enter Master Key to Authorize" required>
+            <div class="form-text text-muted small">Only the event owner has this key.</div>
+        </div>
+
+        <button class="btn btn-danger w-100 fw-bold">CREATE ADMIN</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a href="/admin" class="text-decoration-none small">Cancel</a>
+    </div>
+</div>
+
 </body>
 </html>
